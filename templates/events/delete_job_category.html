@@ -1,0 +1,30 @@
+{% extends 'base/base.html' %}
+{% block title %}Delete Job Category{% endblock title %}
+{% block breadcrumb %}Delete Job Category{% endblock breadcrumb %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <h5>Delete Job Category</h5>
+                        </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-success" href="{% url 'job-category-list' %}">Job Category List</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <p>Are you sure you want to delete "{{ object.name }}"?</p>
+                        <button class="btn btn-danger ml-2" type="submit">Confirm Delete</button>
+                        <a class="btn btn-secondary" href="{% url 'job-category-list' %}">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,88 @@
+{% extends 'base/base.html' %}
+{% block title %}Edit Event{% endblock title %}
+{% block breadcrumb %}Edit Event{% endblock breadcrumb %}
+{% load crispy_forms_tags %}
+
+{% block extrahead %}
+    <!-- Mapbox Configuration -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css' rel='stylesheet' />
+
+    {% load mapbox_location_field_tags %}
+    {% location_field_includes %}
+    {% include_jquery %}
+    <!-- Mapbox Configuration -->
+{% endblock extrahead %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <h5>Edit Event</h5>
+                        </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-success" href="{% url 'event-list' %}">Event List</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <!-- Event Category field has been removed -->
+                        
+                        <!-- Job Category Input -->
+                        <div class="form-group">
+                            <label for="id_job_category">Job Category:</label>
+                            <input type="text" name="job_category_name" id="id_job_category" class="form-control" 
+                                   placeholder="Enter job category" value="{{ job_category_name|default:'' }}">
+                            <small class="text-muted">
+                                Enter a job category name. If it doesn't exist, a new one will be created.
+                            </small>
+                        </div>
+                        
+                        {{ form|crispy  }}
+                        <button class="btn btn-success ml-2" type="submit">Update Event</button>
+                    </form>
+                    {{ form.media }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic2FqaWIxMDY2IiwiYSI6ImNrYnJqb2x6NDAyN2cyc3BuenoxemNjdmEifQ.uWDYuTOqXB9KMPBmeDxORw';
+        var map = new mapboxgl.Map({
+        container: 'location-field-map',
+        style: 'mapbox://styles/mapbox/streets-v11'
+        });
+        
+        // Hide any category fields from the form since we're handling them separately with our text inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            // Find all labels
+            var allLabels = document.querySelectorAll('label');
+            for (var i = 0; i < allLabels.length; i++) {
+                var label = allLabels[i];
+                // Check if the label is for job_category, category, or uid (case insensitive)
+                if ((label.textContent.toLowerCase().includes('job category') && 
+                     (label.getAttribute('for') === null || !label.getAttribute('for').includes('id_job_category'))) ||
+                    (label.textContent.toLowerCase().includes('category') && 
+                     !label.textContent.toLowerCase().includes('job category')) ||
+                    label.textContent.toLowerCase().includes('uid')) {
+                    // Find the parent div.form-group
+                    var parent = label.parentNode;
+                    while (parent && !parent.classList.contains('form-group')) {
+                        parent = parent.parentNode;
+                    }
+                    // Hide the form group
+                    if (parent) {
+                        parent.style.display = 'none';
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock content %}
